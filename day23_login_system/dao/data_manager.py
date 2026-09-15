@@ -87,3 +87,12 @@ class DataManager:
 
     def get_usernames(self):
         return list(self.data.keys())
+
+    def remove_user(self, username):
+        if username in self.data:
+            del self.data[username]
+            self.__save_data__()
+            return True
+        else:
+            print(f"用户不存在: {username}")
+            return False

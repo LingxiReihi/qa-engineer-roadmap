@@ -38,9 +38,14 @@ class LoginService:
 
     def get_users(self):
         if not self.state:
-            print("暂未登录，请登录")
             return None
         return self.dm.get_usernames()
+
+    def remove_user(self, username):
+        if not self.state:
+            return False
+        else:
+            return self.dm.remove_user(username)
 
     def __clear_state__(self):
         self.state = False
