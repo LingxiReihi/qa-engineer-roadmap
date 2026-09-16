@@ -1,0 +1,17 @@
+.venv
+.idea
+.vscode
+__pycache__
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.env
+*.env
+.pytest_cache/
+.coverage
+htmlcov/
+allure-results/
+allure-report/
+reports/
+.DS_Store
