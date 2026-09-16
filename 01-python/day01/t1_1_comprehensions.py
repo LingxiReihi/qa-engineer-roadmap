@@ -1,6 +1,6 @@
-nums = [n for n in range(1, 11)]
+nums = [n for n in range(1, 11) if n % 2 == 0]
 res1 = [n ** 2 for n in nums]
-assert res1 == [1, 4, 9, 16, 25, 36, 49, 64, 81, 100], "res1测试用例1测试失败"
+assert res1 == [4, 16, 36, 64, 100], "res1测试用例1测试失败"
 
 words = ["hello", "world", "python"]
 res2 = {w: len(w) for w in words}
