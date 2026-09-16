@@ -30,7 +30,104 @@
 
 ---
 
-## 三、周计划
+## 三、Day 0：工程环境准备（开始正式学习前）
+
+> **目标**：建好作品集仓库、虚拟环境、第一次 Git 提交。
+> **耗时**：30~60 分钟。
+> **参考**：[11_作品集仓库指南.md](./11_作品集仓库指南.md)。
+
+### 任务 1：检查 Python
+
+```bash
+python --version        # Windows 没有 python 时用 py --version
+pip --version
+```
+
+### 任务 2：建作品集仓库
+
+```bash
+cd ~
+mkdir qa-engineer-roadmap
+cd qa-engineer-roadmap
+git init
+```
+
+### 任务 3：创建目录结构
+
+```bash
+mkdir -p 01-python/day01 01-python/projects \
+         02-software-testing/case-design \
+         03-linux-git \
+         04-pytest 05-api-automation 06-ci-cd \
+         07-web-mobile 08-performance 09-engineering-basics \
+         10-final-project .github/workflows
+```
+
+### 任务 4：虚拟环境
+
+```bash
+python -m venv .venv
+# Windows 激活：.venv\Scripts\activate
+# macOS/Linux：source .venv/bin/activate
+```
+
+### 任务 5：.gitignore
+
+```bash
+cat > .gitignore <<'EOF'
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.env
+*.env
+.pytest_cache/
+.coverage
+htmlcov/
+allure-results/
+allure-report/
+reports/
+.idea/
+.vscode/
+.DS_Store
+EOF
+```
+
+### 任务 6：第一次提交
+
+```bash
+echo "# qa-engineer-roadmap" > README.md
+echo "从 0 基础到测试开发，180 天。" >> README.md
+git add .
+git commit -m "chore: init repository"
+git log --oneline
+```
+
+### 任务 7：推送到 GitHub（可选，推荐）
+
+```bash
+# 1. 在 GitHub 网页创建空仓库（不勾 README）
+# 2. 关联远程
+git remote add origin git@github.com:<你的用户名>/qa-engineer-roadmap.git
+# 3. 推送
+git branch -M main
+git push -u origin main
+```
+
+### Day 0 验收
+
+- [ ] Python 版本已确认
+- [ ] `qa-engineer-roadmap` 仓库已建立
+- [ ] 虚拟环境已创建并激活
+- [ ] `.gitignore` 已写好
+- [ ] 第一次 commit 完成，`git log` 能看到
+- [ ] （推荐）已推送到 GitHub
+
+> Day 0 完成后，说一句「**开始 Day 1**」，进入陪练流程。
+
+---
+
+## 四、周计划
 
 ### 第 1 周：语法补强 + 第一个测试
 
@@ -69,7 +166,7 @@
 
 ---
 
-## 四、关键知识点（精简版）
+## 五、关键知识点（精简版）
 
 > 详细的语法参考可以查官方文档（[docs.python.org](https://docs.python.org/3/)），这里只列「测试开发最常用」的点。
 
@@ -147,7 +244,7 @@ def my_decorator(func):
 
 ---
 
-## 五、训练任务
+## 六、训练任务
 
 > 每个训练都遵循「小步快跑」原则：先读题、再写代码、再运行、再改进。
 
@@ -443,7 +540,7 @@ nums = re.findall(r"\d+", "我有3个苹果和5个香蕉")
 
 ---
 
-## 六、3 个小项目
+## 七、3 个小项目
 
 ### 项目 A：命令行用户管理 + unittest 测试（第 1 周）
 
@@ -710,7 +807,7 @@ tests/
 
 ---
 
-## 七、常见陷阱
+## 八、常见陷阱
 
 | 陷阱 | 说明 | 解决 |
 |---|---|---|
@@ -724,7 +821,7 @@ tests/
 
 ---
 
-## 八、阶段验收
+## 九、阶段验收
 
 本阶段结束时，做以下自检：
 
@@ -740,7 +837,7 @@ tests/
 
 ---
 
-## 九、打卡表（复制到你的笔记）
+## 十、打卡表（复制到你的笔记）
 
 | 训练 | 完成日期 | 备注 |
 |---|---|---|
