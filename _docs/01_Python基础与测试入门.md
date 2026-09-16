@@ -116,12 +116,12 @@ git push -u origin main
 
 ### Day 0 验收
 
-- [ ] Python 版本已确认
-- [ ] `qa-engineer-roadmap` 仓库已建立
-- [ ] 虚拟环境已创建并激活
-- [ ] `.gitignore` 已写好
-- [ ] 第一次 commit 完成，`git log` 能看到
-- [ ] （推荐）已推送到 GitHub
+- [x] Python 版本已确认
+- [x] `qa-engineer-roadmap` 仓库已建立
+- [x] 虚拟环境已创建并激活
+- [x] `.gitignore` 已写好
+- [x] 第一次 commit 完成，`git log` 能看到
+- [x] （推荐）已推送到 GitHub
 
 > Day 0 完成后，说一句「**开始 Day 1**」，进入陪练流程。
 
