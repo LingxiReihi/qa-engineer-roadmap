@@ -23,6 +23,7 @@ def compare(guess: int, target: int) -> str:
 assert compare(1, 2) == Options.smaller, f"compare测试用例1：(1, 2)，预期返回{Options.smaller}"
 assert compare(100, 100) == Options.correct, f"compare测试用例2：(100, 100)，预期返回{Options.correct}"
 assert compare("1", 1) == Options.error, f"compare测试用例3：(\"1\",1)，预期返回{Options.error}"
+assert compare(" ", 1) == Options.error, f"compare测试用例4：(\" \",1)，预期返回{Options.error}"
 
 
 def guess_number(target: int, max_attempts: int = 5) -> bool:
