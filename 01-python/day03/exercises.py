@@ -49,4 +49,4 @@ def add_item(item, cart=None):
 assert add_item("") == [""], 'add_item测试用例1：("")，预期结果为[""]'
 assert add_item("a") == ["a"], 'add_item测试用例2：("a")，预期结果为["a"]'
 assert add_item("b") == ["b"], 'add_item测试用例3：("b")，预期结果为["b"]'
-assert add_item("b", ["a", "c"]) == ["a", "c", "b"], 'add_item测试用例3：("b",["a","c"])，预期结果为["a","c","b"]'
+assert add_item("b", ["a", "c"]) == ["a", "c", "b"], 'add_item测试用例4：("b",["a","c"])，预期结果为["a","c","b"]'
