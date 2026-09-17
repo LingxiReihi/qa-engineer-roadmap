@@ -18,11 +18,11 @@ assert classify_score(-1) == "非法输入", "classify_score测试用例6：scor
 
 def sum_while(n: int) -> int:
     if isinstance(n, int) and n >= 0:
-        sum = 0
+        total = 0
         while n >= 0:
-            sum += n
+            total += n
             n -= 1
-        return sum
+        return total
     return 0
 
 
