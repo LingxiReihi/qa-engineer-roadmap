@@ -19,14 +19,14 @@ assert means("1", "2") == 0, 'means测试用例5：("1", "2")，预期结果为0
 
 
 def make_user(name, age, **extra) -> dict:
-    if name and age:
+    if name and isinstance(age, int) and age >= 0:
         return {"name": name, "age": age, **extra}
     else:
         return dict()
 
 
 make_user_res1 = dict()
-make_user_res2 = {'name': 'Bob', 'age': 25}
+make_user_res2 = {'name': 'Bob', 'age': 0}
 make_user_res3 = {
     "name": "tom",
     "age": 18,
@@ -34,7 +34,7 @@ make_user_res3 = {
     "friend": "me",
 }
 assert make_user("", "") == make_user_res1, f'make_user测试用例1：("","")，预期结果为{make_user_res1}'
-assert make_user("Bob", 25) == make_user_res2, f'make_user测试用例2：("Bob", 25)，预期结果为{make_user_res2}'
+assert make_user("Bob", 0) == make_user_res2, f'make_user测试用例2：("Bob", 25)，预期结果为{make_user_res2}'
 assert make_user("tom", 18, study="测试",
                  friend="me") == make_user_res3, f'make_user测试用例3：("tom", 18, study="测试", friend="me")，预期结果为{make_user_res3}'
 
