@@ -98,23 +98,66 @@ if __name__ == "__main__":
 2. 写一个带 `if __name__ == "__main__"` 的模块，**验证被导入时不执行演示代码**（例如模块里 `RUN = "demo"`，main 块里改成 `"run"`，导入后断言 `RUN == "demo"`）
 3. 三种 import 形态各写一次，分别调用
 
-## 五、今日实战任务（T1-4：`calc/` 包）
+## 五、今日实战任务（T1-4：`calc/` 包——详细规格）
+
+### 5.1 目标结构
 
 ```text
 01-python/day04/
-├── calc/
-│   ├── __init__.py        # 导出 add, subtract
-│   ├── arithmetic.py      # add, subtract, multiply
-│   └── utils.py           # 工具函数（如 clamp：把值限制在 [0, 100]）
-└── test_calc.py           # 包外部的测试脚本
+├── calc/                     # 包
+│   ├── __init__.py           # 对外导出（API 门面）
+│   ├── arithmetic.py         # 四则运算（纯函数）
+│   └── utils.py              # 工具函数
+└── test_calc.py              # 包外测试脚本（验收入口）
 ```
 
-**验收**：在 `01-python/day04/` 下运行 `test_calc.py`，里面 `from calc import add` 能成功并断言。
+### 5.2 `arithmetic.py` —— 3 个纯函数，带类型注解和 docstring
 
-**加分**：
-- `multiply` 也加入导出
-- `utils.py` 里的工具函数（如 clamp）也写断言
-- 想想：`__init__.py` 只导出 add/subtract 时，`from calc import multiply` 会怎样？——这个"想"比写更重要
+| 函数 | 行为 | 必测断言 |
+|---|---|---|
+| `add(a: float, b: float) -> float` | a + b | `add(1, 2) == 3`；`add(-1, 1) == 0` |
+| `subtract(a: float, b: float) -> float` | a - b | `subtract(5, 3) == 2`；`subtract(3, 5) == -2`（负数边界） |
+| `multiply(a: float, b: float) -> float` | a * b | `multiply(4, 0.5) == 2.0`；`multiply(0, 9) == 0` |
+
+> ⚠️ **浮点坑 1（真实测试陷阱）**：`0.1 + 0.2 == 0.3` 是 `False`（实际是 `0.30000000000000004`）。浮点断言**不要用裸 `==`**，用 `round(x, 2) == 0.3` 或 `abs(x - 0.3) < 1e-9`。在 test_calc.py 里给 `add(0.1, 0.2)` 写一条**能通过**的断言，并用注释说明为什么。
+
+### 5.3 `utils.py` —— 至少 2 个工具函数
+
+| 函数 | 行为 | 必测断言 |
+|---|---|---|
+| `clamp(value, low=0, high=100) -> float` | 超下界取下界、超上界取上界、否则原值 | `clamp(50) == 50`；`clamp(-10) == 0`；`clamp(150) == 100`；`clamp(50, 10, 20) == 20` |
+| `round2(value) -> float` | 四舍五入保留 2 位小数（价格场景） | `round2(3.14159) == 3.14` |
+
+> ⚠️ **浮点坑 2**：`round(2.675, 2)` 返回 `2.67` 而不是 `2.68`（二进制浮点表示所致）。亲手试一下，把这个发现写进注释——这是断言最容易翻车的地方。
+
+### 5.4 `__init__.py` —— 导出策略（含思考题）
+
+```python
+from .arithmetic import add, subtract
+from .utils import clamp
+```
+
+- **故意不导出 `multiply`**，然后在 test_calc.py 里实测并注释结论：
+  - `from calc import multiply` → ？（预期 `ImportError`）
+  - `from calc.arithmetic import multiply` → ✅ 成功
+- 这个实验证明：**包的对外 API 由 `__init__.py` 决定**，内部模块文件不是 API。
+
+### 5.5 `test_calc.py` —— 包外测试脚本（验收入口）
+
+要求：
+1. 全部断言通过、exit 0；运行方式：在 `01-python/day04/` 目录下执行 `.venv\Scripts\python.exe test_calc.py`
+2. 覆盖：每个函数 ≥3 条（正常 / 边界 / 负数或浮点）
+3. 每条断言消息写**预期是什么**，编号连续（Day 1~3 的教训）
+4. 注释写清：两个浮点坑的结论、`multiply` 导出实验的结论
+5. 全部通过后打印 `print("calc 包全部通过")`
+
+### 5.6 验收清单
+
+- [ ] `from calc import add, subtract, clamp` 全部可用
+- [ ] `from calc.arithmetic import multiply` 可用；`from calc import multiply` 的行为已实测并注释
+- [ ] 浮点断言用 `round` / 误差比较，而不是裸 `==`
+- [ ] 全部断言通过、exit 0、`print("calc 包全部通过")` 出现
+- [ ] 包内没有"导入即打印"的代码（`__main__` 守卫意识）
 
 ## 六、提交要求
 
