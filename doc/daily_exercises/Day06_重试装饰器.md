@@ -114,6 +114,81 @@ def retry(attempts=3, delay=0, exceptions=(Exception,)):
 
 ## 四、测试要求
 
+### 4.0 如何测试装饰器（先读这一节，再谈用例）
+
+**核心认识**：`@retry(attempts=3)` 写在 `def fn` 上面，等价于后面有一行 `fn = retry(attempts=3)(fn)`。也就是说——
+
+> **你测的不是「装饰器」，你测的是「被包装后的那个函数」`retry(attempts=3)(fn)`。**
+
+所以测试脚手架只有三步，和测普通函数几乎一样，只是多了「把函数套一层」：
+
+```python
+def make_flaky(failures, exc, calls=None):
+    """前 failures 次抛 exc、之后返回 ok；state.n 计调用次数，calls 收每次参数。"""
+    state = {"n": 0}
+    def fn(*a, **k):
+        state["n"] += 1
+        if calls is not None:
+            calls.append((a, k))
+        if state["n"] <= failures:
+            raise exc
+        return "ok"
+    return fn, state
+
+
+# 1) 造一个「前 2 次必失败」的目标函数
+flaky, state = make_flaky(failures=2, exc=ValueError("x"), calls=None)
+
+# 2) 手动套装饰器 —— 不要在测试里写 @ ！直接调用 retry(...)(fn)
+wrapped = retry(attempts=3)(flaky)
+
+# 3) 调用包装后的函数，断言结果 + 调用次数
+result = wrapped()
+assert result == "ok"          # 失败 2 次后成功了
+assert state["n"] == 3          # 总共试了 3 次 == attempts
+```
+
+**为什么测试里不写 `@`，而是 `wrapped = retry(...)(fn)`**：
+
+- `@` 是语法糖，绑定在 `def` 那行上，一个装饰器参数只能用一次；
+- 手动调用能让你在一个 `def` 上套出**不同参数**的多个包装函数（`attempts=1`、`attempts=3`、`exceptions=(ValueError,)`……），用例才写得出来；
+- 一行代码就还原了 `@` 做的事，等价且更灵活。
+
+**三个必备手法**：
+
+| 要验证什么 | 手法 | 为什么 |
+|-----------|------|--------|
+| 重试了几次 | 闭包变量 `state["n"]` 计数 | 这是包装函数调用**原函数**的次数，重试几次就看它 |
+| 参数有没有原样传 | `calls` 列表记下每次 `(a, k)` | 比对转发是否漏参数 |
+| 抛的是不是最后一次那个对象 | 先造 `err = ValueError("boom")`，原函数每次 `raise err`，断言 `caught is err` | `==` 比内容，`is` 比对象——只有 `is` 能证明「同一个对象被重新扔出来」 |
+
+**异常同一性怎么断言**：
+
+```python
+err = ValueError("boom")
+fn, state = make_flaky(failures=99, exc=err, calls=None)
+wrapped = retry(attempts=3)(fn)
+caught = None
+try:
+    wrapped()
+except ValueError as e:
+    caught = e
+assert state["n"] == 3     # 试满 3 次
+assert caught is err       # 抛的是最开始那个对象，不是新造的
+```
+
+**参数校验怎么断言（fail fast）**：
+
+```python
+try:
+    retry(attempts=0)      # 装饰时（这一行执行时）就该抛
+    assert False, "应抛 ValueError"
+except ValueError:
+    pass
+```
+
+> 把 `make_flaky`、`state`、`err` 这些脚手架写进你的 `test_retry.py`（这是**测试工具**，不是 retry 的实现，不算抄答案）。规格 §3.5 的 21 条用例 = 用这套脚手架把 §3.3 行为契约逐条落到断言。
+
 ### 4.1 断言技巧（两条新增）
 
 1. **闭包计数器**：构造一个内部计数、前 `failures` 次抛异常的函数，用闭包变量记录调用次数——这是验证「重试了几次」的标准手法
